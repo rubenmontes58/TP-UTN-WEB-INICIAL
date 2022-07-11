@@ -235,6 +235,14 @@ app.get('/edit/:id', (req, res) =>{
 
 
 
+
+
+
+
+
+
+
+
 app.post('/edit', (req, res) =>{
     const { id, nombreyapellido,dirretiro,provincia,ciudad,hora,fecha,caracteristicas,dniretiro,fechaentrega,horaentrega,direntrega,ciudadentrega,provinciaentrega,precio} = req.body;
     let sql = `UPDATE PEDIDOS SET nombreyapellido = ?, dirretiro = ?, provincia = ?, ciudad = ?, hora = ?, fecha = ?, caracteristicas = ?, dniretiro = ?, fechaentrega = ?, horaentrega = ?, direntrega = ?, ciudadentrega = ?, provinciaentrega = ?, precio = ? WHERE id = ?`;
