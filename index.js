@@ -216,7 +216,10 @@ app.get('/edit/:id', (req, res) =>{
     conexion.query(sql, values, (error, results, fields) => {
         if (error) throw error;
         
-        res.render('edit', {titulo: 'Editar Pedido', results});
+   console.log(id);
+
+        res.render('edit', {results});
+        
     }
     );
 }
@@ -231,19 +234,13 @@ app.get('/edit/:id', (req, res) =>{
 
 
 
-
-
-
-
-
-app.post('/edit/:id', (req, res) =>{
-        const { id } = req.params;
-    const { nombreyapellido,dirretiro,provincia,ciudad,hora,fecha,caracteristicas,dniretiro,fechaentrega,horaentrega,direntrega,ciudadentrega,provinciaentrega,precio} = req.body;
+app.post('/edit', (req, res) =>{
+    const { id, nombreyapellido,dirretiro,provincia,ciudad,hora,fecha,caracteristicas,dniretiro,fechaentrega,horaentrega,direntrega,ciudadentrega,provinciaentrega,precio} = req.body;
     let sql = `UPDATE PEDIDOS SET nombreyapellido = ?, dirretiro = ?, provincia = ?, ciudad = ?, hora = ?, fecha = ?, caracteristicas = ?, dniretiro = ?, fechaentrega = ?, horaentrega = ?, direntrega = ?, ciudadentrega = ?, provinciaentrega = ?, precio = ? WHERE id = ?`;
     let values = [nombreyapellido,dirretiro,provincia,ciudad,hora,fecha,caracteristicas,dniretiro,fechaentrega,horaentrega,direntrega,ciudadentrega,provinciaentrega,precio,id];
     conexion.query(sql, values, (error, results, fields) => {
         if (error) throw error;
-        console.log('Resuults: ', results);
+        console.log(id);
         console.log('Registro Actualizado');
         res.redirect('/');
     }
@@ -264,18 +261,8 @@ app.post('/edit/:id', (req, res) =>{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+        
+    
 
 
 
@@ -301,6 +288,7 @@ app.get('/delete/:id', (req, res) =>{
     );
 }
 );
+
 
 
 //mostramos los datos de la base de datos
