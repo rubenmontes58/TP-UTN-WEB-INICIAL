@@ -8,6 +8,7 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const { Console } = require('console');
+const { get } = require('http');
 const conexion = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -150,6 +151,8 @@ res.render('login', {titulo: 'USUARIO NO REGISTRADO'})
 );
 
 
+
+
 //autenticacion login
 app.post('/login', (req, res) =>{
     const { usuario, contrasena } = req.body;
@@ -227,35 +230,61 @@ app.get('/edit/:id', (req, res) =>{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-app.post('/edit', (req, res) =>{
-    const { id, nombreyapellido,dirretiro,provincia,ciudad,hora,fecha,caracteristicas,dniretiro,fechaentrega,horaentrega,direntrega,ciudadentrega,provinciaentrega,precio} = req.body;
-    let sql = `UPDATE PEDIDOS SET nombreyapellido = ?, dirretiro = ?, provincia = ?, ciudad = ?, hora = ?, fecha = ?, caracteristicas = ?, dniretiro = ?, fechaentrega = ?, horaentrega = ?, direntrega = ?, ciudadentrega = ?, provinciaentrega = ?, precio = ? WHERE id = ?`;
-    let values = [nombreyapellido,dirretiro,provincia,ciudad,hora,fecha,caracteristicas,dniretiro,fechaentrega,horaentrega,direntrega,ciudadentrega,provinciaentrega,precio,id];
+//ver db
+app.get('/verdb/', (req, res) =>{
+    let sql = `SELECT * FROM USUARIOS`;
+    let values = [];
     conexion.query(sql, values, (error, results, fields) => {
         if (error) throw error;
-        console.log(id);
-        console.log('Registro Actualizado');
-        res.redirect('/');
+       
+        res.render('verdb', {results});
     }
     );
 }
 );
+
+
+
+
+
+
+app.get('/veredit/:id', (req, res) =>{
+    const { id } = req.params;
+    let sql = `SELECT * FROM USUARIOS WHERE id = ?`;
+    let values = [id];
+    conexion.query(sql, values, (error, results, fields) => {
+        if (error) throw error;
+       
+        res.render('veredit', {results});
+    }
+    );
+}
+);
+
+
+
+
+
+
+
+app.post('/veredit/:id', (req, res) =>{
+    const { id } = req.params;
+    const { usuario, contrasena } = req.body;
+    const contrasenaHash = bcrypt.hashSync(contrasena, 10);
+    let sql = `UPDATE USUARIOS SET usuario = ?, contrasena = ? WHERE id = ?`;
+    let values = [usuario, contrasenaHash, id];
+    conexion.query(sql, values, (error, results, fields) => {
+        if (error) throw error;
+        console.log(id);
+        res.redirect('/verdb');
+    }
+    );
+}
+);
+
+
+
+
 
 
 
@@ -270,16 +299,20 @@ app.post('/edit', (req, res) =>{
 
 
 
-        
-    
-
-
-
-
-
-
-
-
+//editar por id
+app.post('/edit/', (req, res) =>{
+    const { id } = req.body;
+    const { nombreyapellido,dirretiro,provincia,ciudad,hora,fecha,caracteristicas,dniretiro,fechaentrega,horaentrega,direntrega,ciudadentrega,provinciaentrega,precio} = req.body;
+    let sql = `UPDATE PEDIDOS SET nombreyapellido = ?, dirretiro = ?, provincia = ?, ciudad = ?, hora = ?, fecha = ?, caracteristicas = ?, dniretiro = ?, fechaentrega = ?, horaentrega = ?, direntrega = ?, ciudadentrega = ?, provinciaentrega = ?, precio = ? WHERE id = ?`;
+    let values = [nombreyapellido,dirretiro,provincia,ciudad,hora,fecha,caracteristicas,dniretiro,fechaentrega,horaentrega,direntrega,ciudadentrega,provinciaentrega,precio,id];
+    conexion.query(sql, values, (error, results, fields) => {
+        if (error) throw error;
+        console.log(id);
+        res.redirect('/verdb');
+    }
+    );
+}
+);
 
 
 
@@ -288,11 +321,11 @@ app.post('/edit', (req, res) =>{
 //eliminar campos de pedidos
 app.get('/delete/:id', (req, res) =>{
     const id = req.params.id;
-    const sql = `DELETE FROM PEDIDOS WHERE id = ?`;
+    const sql = `DELETE FROM USUARIOS WHERE id = ?`;
     conexion.query(sql, id, (error, results, fields) => {
         if (error) throw error;
         console.log('Registro Eliminado');
-        res.redirect('/tomarpedidos');
+        res.redirect('/verdb');
     }
     );
 }
@@ -317,17 +350,12 @@ app.get('/tomarpedidos', (req, res) =>{
 
 
 
-//escucha el puerto
-
 app.listen(Port, ()=>{
     console.log(`Servidor corriendo en el Puerto ${Port}`);
 });
 app.on('error', (error) =>{
     console.log(`Tenemos un error ${error}`);
 });
-
-
-
 
 
 
